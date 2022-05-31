@@ -1,0 +1,29 @@
+                                                          Determinação dos Endereços de SVI e Gateway
+
+!Acessando o modo exec privilegiado
+enable
+
+	!Acessar modo de configuração global
+	configure terminal
+	
+	!Configuração do gateway padrão IPv4 do SVI
+	!Utilizado para acessar remotamente o equipamento
+	ip default-gateway 172.16.10.254
+  
+	!Configuração da interface virtual VLAN SVI
+	interface vlan 10
+		
+		!Configuração da descrição
+		description Interface SVI de Gerenciamento do Grupo-0?
+		
+		!Configuração do endereçamento IPv4 do SVI
+		ip address 172.16.10.253 255.255.255.0
+		
+		!Inicializando a interface
+		no shutdown
+		
+		!Saindo de todos os níveis
+		end
+
+#01_ Determinação do endereço IPv4 da VLAN de SVI e Gateway do Switch Layer 3
+SVI:    172.16.10.253/24    -   Gateway: 172.16.10.254/24
