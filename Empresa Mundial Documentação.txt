@@ -4,3 +4,7 @@ Luiz Felipe porta 24 OK  Cabo
 Luan Cunha porta 25 OK   Switch
 Pablo Eduardo porta 26 OK  Router
 
+IP switch: 172.16.10.253
+IP Router: 172.16.10.254
+
+
