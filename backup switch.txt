@@ -1,0 +1,193 @@
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname sw-g1
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$gNFA$ETw/F53TUDH7fJhxfU2vk0
+!
+username luan privilege 15 secret 5 $1$kO6A$7ZMlvPYVc1BwsxQi0.gt//
+username pablo privilege 15 secret 5 $1$LTWs$VEpa7GHU140EbgQVVkYeK0
+username luiz privilege 15 secret 5 $1$BCMW$tGZYgaO2ojLY3hpbe6Yl2/
+!
+!
+no aaa new-model
+system mtu routing 1500
+no ip domain-lookup
+ip domain-name senac.br
+!
+!
+login block-for 120 attempts 4 within 60
+!
+!
+crypto pki trustpoint TP-self-signed-446285824
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-446285824
+ revocation-check none
+ rsakeypair TP-self-signed-446285824
+!
+!
+crypto pki certificate chain TP-self-signed-446285824
+ certificate self-signed 01
+  30820244 308201AD A0030201 02020101 300D0609 2A864886 F70D0101 04050030
+  30312E30 2C060355 04031325 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 34343632 38353832 34301E17 0D393330 33303130 30303130
+  395A170D 32303031 30313030 30303030 5A303031 2E302C06 03550403 1325494F
+  532D5365 6C662D53 69676E65 642D4365 72746966 69636174 652D3434 36323835
+  38323430 819F300D 06092A86 4886F70D 01010105 0003818D 00308189 02818100
+  AD71CDE9 E182FA70 94E5C3BE F159ED89 0859798A 43E184A6 A761D311 EFAD9058
+  01946C06 7D9CF34D 3B5B1A98 C51DDF42 1BFB9B7A 05B599D0 EA971BF7 FC5DE244
+  7846E9AC 2CC85197 CF2A4546 791E8CEA 37D472B1 CA451421 F5E31C40 BC7B3BA7
+  589B6B07 5EDA8159 226B5676 A1226633 91BE67F4 DE6240BF 67EB90AE 2E601EEB
+  02030100 01A36E30 6C300F06 03551D13 0101FF04 05300301 01FF3019 0603551D
+  11041230 10820E73 772D6731 2E73656E 61632E62 72301F06 03551D23 04183016
+  8014634A E853D24A 43C4599B 99481462 BB6009C0 1C84301D 0603551D 0E041604
+  14634AE8 53D24A43 C4599B99 481462BB 6009C01C 84300D06 092A8648 86F70D01
+  01040500 03818100 371E76FD 238F0801 4EA7172A B6F4627F B1A00584 4A010921
+  ABB60620 30F56F04 70ADBF78 ABE172D1 0DBD2735 B01DD1DA CDCE7D24 51096492
+  1AB1FB6A 5AD3BF21 DA995AB2 555F9EBD C4C5A517 F4753F20 413789A2 9A5C69D6
+  9DCC33A0 30FD510C 0AD276D8 3B334AAE 6195B599 79ED628E 9CB2AE99 0B87A6AC
+  5CBD78EA 3FD95A40
+  quit
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+ip ssh time-out 60
+ip ssh authentication-retries 2
+ip ssh version 2
+!
+!
+!
+interface FastEthernet0/1
+!
+interface FastEthernet0/2
+ description interface de acesso da VLAN Luan
+ switchport access vlan 11
+ switchport mode access
+!
+interface FastEthernet0/3
+ description interface de acesso da VLAN Pablo
+ switchport access vlan 12
+ switchport mode access
+!
+interface FastEthernet0/4
+ description interface de acesso da VLAN Luiz
+ switchport access vlan 13
+ switchport mode access
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+ description interface de acesso da VLAN Wireless
+ switchport access vlan 15
+ switchport mode access
+!
+interface FastEthernet0/7
+ shutdown
+!
+interface FastEthernet0/8
+ shutdown
+!
+interface FastEthernet0/9
+ shutdown
+!
+interface FastEthernet0/10
+ shutdown
+!
+interface FastEthernet0/11
+ shutdown
+!
+interface FastEthernet0/12
+ shutdown
+!
+interface FastEthernet0/13
+ shutdown
+!
+interface FastEthernet0/14
+ shutdown
+!
+interface FastEthernet0/15
+ shutdown
+!
+interface FastEthernet0/16
+ shutdown
+!
+interface FastEthernet0/17
+ shutdown
+!
+interface FastEthernet0/18
+ shutdown
+!
+interface FastEthernet0/19
+ shutdown
+!
+interface FastEthernet0/20
+ shutdown
+!
+interface FastEthernet0/21
+ shutdown
+!
+interface FastEthernet0/22
+ shutdown
+!
+interface FastEthernet0/23
+ shutdown
+!
+interface FastEthernet0/24
+ description interface de trunk com router 2911 do grupo-1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan10
+ description Interface SVI de gerenciamento do grupo-01
+ ip address 172.16.10.253 255.255.255.0
+!
+ip default-gateway 172.16.10.254
+ip classless
+ip http server
+ip http secure-server
+!
+!
+!
+!
+!
+banner motd ^C  __  __ _    _ _   _ _____ _____          _
+ |  \/  | |  | | \ | |  __ \_   _|   /\   | |
+ | \  / | |  | |  \| | |  | || |    /  \  | |
+ | |\/| | |  | | . ` | |  | || |   / /\ \ | |
+ | |  | | |__| | |\  | |__| || |_ / ____ \| |____
+ |_|  |_|\____/|_| \_|_____/_____/_/    \_\______|^C
+!
+line con 0
+ exec-timeout 5 30
+ password 7 135445412B1F01242A27
+ logging synchronous
+ login local
+line vty 0 4
+ exec-timeout 5 30
+ password 7 025756082B150A2F4D4D
+ logging synchronous
+ login local
+ transport input ssh
+line vty 5 15
+ login
+!
+end

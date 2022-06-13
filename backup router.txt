@@ -1,0 +1,209 @@
+!
+! Last configuration change at 22:01:03 UTC Mon Jun 13 2022 by pablo
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname rt-g1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+security passwords min-length 8
+enable secret 4 D.ypdVr3FRhEsh3TDjrkDyDFbL3RbUr48j5o40PFfTA
+!
+no aaa new-model
+!
+ip cef
+!
+!
+!
+ip dhcp excluded-address 172.16.11.1 172.16.11.100
+ip dhcp excluded-address 172.16.11.200 172.16.11.254
+ip dhcp excluded-address 172.16.12.1 172.16.12.100
+ip dhcp excluded-address 172.16.12.200 172.16.12.254
+ip dhcp excluded-address 172.16.13.1 172.16.13.100
+ip dhcp excluded-address 172.16.13.200 172.16.13.254
+ip dhcp excluded-address 172.16.15.1 172.16.15.100
+ip dhcp excluded-address 172.16.15.200 172.16.15.254
+!
+ip dhcp pool vlan 11
+ network 172.16.11.0 255.255.255.0
+ default-router 172.16.11.254
+ dns-server 8.8.8.8 8.8.4.4
+ domain-name senac.br
+!
+ip dhcp pool vlan-12
+ network 172.16.12.0 255.255.255.0
+ default-router 172.16.12.254
+ dns-server 8.8.8.8 8.8.4.4
+ domain-name senac.br
+!
+ip dhcp pool vlan-13
+ network 172.16.13.0 255.255.255.0
+ default-router 172.16.13.254
+ dns-server 8.8.8.8 8.8.4.4
+ domain-name senac.br
+!
+ip dhcp pool vlan-15
+ network 172.16.15.0 255.255.255.0
+ default-router 172.16.15.254
+ dns-server 8.8.8.8 8.8.4.4
+ domain-name senac.br
+!
+!
+!
+no ip domain lookup
+ip domain name senac.br
+login block-for 120 attempts 4 within 60
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+license udi pid CISCO2911BR-SEC/K9 sn TSP1833ABCT
+!
+!
+username luan privilege 15 secret 4 D.ypdVr3FRhEsh3TDjrkDyDFbL3RbUr48j5o40PFfTA
+username pablo privilege 15 secret 4 D.ypdVr3FRhEsh3TDjrkDyDFbL3RbUr48j5o40PFfTA
+username luiz privilege 15 secret 4 D.ypdVr3FRhEsh3TDjrkDyDFbL3RbUr48j5o40PFfTA
+!
+redundancy
+!
+!
+!
+!
+!
+ip ssh authentication-retries 2
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+interface Embedded-Service-Engine0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
+ description Subinterface da VLAN de SVI do Switch Layer 3 3560
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.10
+ description subinterface da Vlan de SVI do Switch layer 3 3560
+ encapsulation dot1Q 10
+ ip address 172.16.10.254 255.255.255.0
+!
+interface GigabitEthernet0/0.11
+ description subinterface da Vlan do primeiro usuario
+ encapsulation dot1Q 11
+ ip address 172.16.11.254 255.255.255.0
+!
+interface GigabitEthernet0/0.12
+ description subinterface da Vlan do segundo usuario
+ encapsulation dot1Q 12
+ ip address 172.16.12.254 255.255.255.0
+!
+interface GigabitEthernet0/0.13
+ description subinterface da Vlan do terceiro usuario
+ encapsulation dot1Q 13
+ ip address 172.16.13.254 255.255.255.0
+!
+interface GigabitEthernet0/0.15
+ description subinterface da Vlan Wireless
+ encapsulation dot1Q 15
+ ip address 172.16.15.254 255.255.255.0
+!
+interface GigabitEthernet0/1
+ description interface de acesso da internet do grupo 01
+ ip address dhcp
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ description interface grupo 01 para grupo 02
+ bandwidth 64
+ ip address 192.168.1.1 255.255.255.252
+ clock rate 64000
+!
+interface Serial0/0/1
+ description interface grupo 06 para grupo 01
+ bandwidth 64
+ ip address 192.168.1.22 255.255.255.252
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes detail
+ auto-cost reference-bandwidth 10000
+ passive-interface GigabitEthernet0/0
+ passive-interface GigabitEthernet0/1
+ network 172.16.10.0 0.0.0.255 area 0
+ network 172.16.11.0 0.0.0.255 area 0
+ network 172.16.12.0 0.0.0.255 area 0
+ network 172.16.13.0 0.0.0.255 area 0
+ network 172.16.15.0 0.0.0.255 area 0
+ network 192.168.1.0 0.0.0.3 area 0
+ network 192.168.1.20 0.0.0.3 area 0
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+banner motd ^C  __  __   _    _   _   _   _____    _____              _
+ |  \/  | | |  | | | \ | | |  __ \  |_   _|     /\     | |
+ | \  / | | |  | | |  \| | | |  | |   | |      /  \    | |
+ | |\/| | | |  | | | . ` | | |  | |   | |     / /\ \   | |
+ | |  | | | |__| | | |\  | | |__| |  _| |_   / ____ \  | |____
+ |_|  |_|  \____/  |_| \_| |_____/  |_____| /_/    \_\ |______|
+                                                               ^C
+!
+line con 0
+ exec-timeout 5 30
+ password 7 11584B5637010E020529
+ logging synchronous
+ login local
+line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
+line vty 0 4
+ exec-timeout 5 30
+ password 7 144640581F01242A27
+ logging synchronous
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+!
+end
