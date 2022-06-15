@@ -1,0 +1,71 @@
+!Configuração do Protocolo OSPF no Router 2911
+!Acessar o modo enable
+enable
+
+  !Acessar o modo de configuração global
+  configure terminal
+  
+  !Configuração da Interface de Loopback 0 (sempre será a Loopback 0, não mudar)
+  interface loopback 0
+    
+    !Descrição da Interface
+    description Interface de Loopback para ID do OSPF
+
+    !Endereço IPv4 para o ID do OSPF
+    !Verificar o endereçamento IP de Loopback do seu grupo
+    !Endereço IP utilizado para o gerenciamento e métrica do OSPF
+    !OBSERVAÇÃO IMPORTANTE: veja o arquivo 00-DocumentacaoDaRede.txt
+    ip address 1.1.1.1 255.255.255.255
+    
+    !Inicializando a interface
+    no shutdown
+    
+    !Saindo das configurações da Interface
+    exit
+  
+  !Configurando o Roteamento de OSPF (?? = número de processo local)
+  !Verificar a tabela de Endereçamento para ver o seu número de Processo Local
+  !Pode existir vários processo locais do OSPF, cada um com uma finalidade diferente
+  !OBSERVAÇÃO IMPORTANTE: veja o arquivo 00-DocumentacaoDaRede.txt
+  router ospf 1
+  
+    !Identificação do Roteador
+    !Verificar o endereço IP de Loopback do seu grupo
+    !OSPF utiliza o endereço de Loopback para gerenciar o processo local
+    router-id 1.1.1.1
+      
+    !Desativando os anúncios do Protocolo OSPF na Interface da LAN
+    !Essa interface não vai anunciar suas rotas pela interface, mais pode receber anúncios
+    passive-interface gigabitEthernet 0/0
+	
+    !Desativando os anúncios do Protocolo OSPF na Interface de Internet
+    !Essa interface não vai anunciar suas rotas pela interface, mais pode receber anúncios
+    passive-interface gigabitEthernet 0/1
+
+    !Configuração da referência de largura de banda (Métrica)
+    !Para o cálculo de custo dos links, padrão 10^8 = 100000000 bps
+    !Link tabela padrão de métrica do custo dos links do OSPF: 
+    !http://nomundodasredes.blogspot.com.br/2012/03/metrica-do-ospf.html
+    !https://ciscoredes.com.br/wp-content/uploads/2012/06/Cost_Interface.png
+    auto-cost reference-bandwidth 10000
+  
+    !Registrar todas as alterações de adjacência e o estado dos links
+    !Esses registros vão ficar armazenados no log do sistema
+    log-adjacency-changes detail
+	
+    !Declarando as redes fisicamente conectadas
+    !Utilizando o recurso de Wildcard Mask (máscara coringa - máscara invertida)
+    !Configuração da Área 0 (Single Area - Backbone, obrigatória existir)
+    !Calculando a máscara coringa: 255.255.255.255 - sua_mascara
+    !Exemplo: 255.255.255.255 - 255.255.255.252 = 0.0.0.3
+    !OBSERVAÇÃO IMPORTANTE: veja o arquivo 00-DocumentacaoDaRede.txt
+    network 172.16.10.0 0.0.0.255 area 0
+    network 172.16.11.0 0.0.0.255 area 0
+    network 172.16.12.0 0.0.0.255 area 0
+    network 172.16.13.0 0.0.0.255 area 0
+    network 172.16.15.0 0.0.0.255 area 0
+    network 192.168.1.0 0.0.0.3 area 0
+    network 192.168.1.20 0.0.0.3 area 0
+    
+    !Saindo de todas as configurações
+    end
